@@ -8,7 +8,7 @@ from streamlit_gsheets import GSheetsConnection
 NAMA_TOKO = "Dapur Teh Nunung (DTN)"
 SLOGAN = "Makan Enak,,,Enak Makan,,,"
 # Masukkan URL Google Sheets Anda di sini
-URL_SHEET = "https://docs.google.com/spreadsheets/d/1gRsF4YZtDLAhIRquST9I0UqxfnYqUVvPL9nq0IOFuTE/edit?usp=sharing"
+URL_SHEET = "https://docs.google.com/spreadsheets/d/1gRsF4YZtDLAhIRquST9I0UqxfnYqUVvPL9nq0IOFuTE/edit?gid=914712513#gid=914712513"
 
 st.set_page_config(page_title=NAMA_TOKO, layout="centered")
 
@@ -112,4 +112,5 @@ if st.session_state.last_receipt:
     if st.button("PESANAN BARU", width='stretch'):
         st.session_state.last_receipt = None
         st.rerun()
+
 
