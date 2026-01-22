@@ -18,15 +18,13 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 # --- FUNGSI LOAD DATA ---
 def load_data():
     try:
-        # Mengambil data dari tab pertama (Penjualan) dan tab kedua (Menu)
-        df_penjualan = conn.read(spreadsheet=URL_SHEET, worksheet="Sheet1")
-        # Pastikan Anda membuat tab bernama "Menu" di Google Sheets yang sama
-        df_menu = conn.read(spreadsheet=URL_SHEET, worksheet="Menu")
+        # ttl=0 memaksa aplikasi mengambil data baru tanpa menunggu cache
+        df_penjualan = conn.read(spreadsheet=URL_SHEET, worksheet="Sheet1", ttl=0)
+        df_menu = conn.read(spreadsheet=URL_SHEET, worksheet="Menu", ttl=0)
         return df_penjualan, df_menu
-    except:
-        # Jika tab Menu belum ada, gunakan data darurat
-        df_menu = pd.DataFrame({'kategori': ['Makanan'], 'nama': ['Contoh Menu'], 'harga': [10000]})
-        return pd.DataFrame(), df_menu
+    except Exception as e:
+        st.error(f"Gagal koneksi: {e}") # Ini akan memunculkan pesan error asli jika gagal
+        return pd.DataFrame(), pd.DataFrame()
 
 # --- INISIALISASI ---
 if 'orders' not in st.session_state: st.session_state.orders = []
@@ -112,5 +110,6 @@ if st.session_state.last_receipt:
     if st.button("PESANAN BARU", width='stretch'):
         st.session_state.last_receipt = None
         st.rerun()
+
 
 
