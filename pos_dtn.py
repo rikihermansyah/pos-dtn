@@ -52,23 +52,30 @@ with st.sidebar:
 
 # --- HALAMAN UTAMA ---
 st.title(f"🍴 {NAMA_TOKO}")
-st.write(f"*{SLOGAN}*")
 
-no_meja = st.text_input("📍 Meja", "01")
+# Cek apakah ada data menu
+if df_menu.empty or 'kategori' not in df_menu.columns:
+    st.warning("⚠️ Daftar menu masih kosong. Silakan tambah menu di Sidebar (pojok kiri atas).")
+else:
+    no_meja = st.text_input("📍 Meja", "01")
 
-# Tabs Menu berdasarkan Kategori
-categories = df_menu['kategori'].unique()
-tabs = st.tabs(list(categories))
+    # Ambil kategori unik
+    categories = df_menu['kategori'].unique()
+    
+    if len(categories) > 0:
+        tabs = st.tabs(list(categories))
 
-for i, cat in enumerate(categories):
-    with tabs[i]:
-        items = df_menu[df_menu['kategori'] == cat].reset_index()
-        cols = st.columns(2)
-        for idx, row in items.iterrows():
-            if cols[idx % 2].button(f"{row['nama']}\nRp{row['harga']:,}", key=f"m_{idx}_{i}", width='stretch'):
-                st.session_state.orders.append({"Item": row['nama'], "Harga": row['harga']})
-
-st.divider()
+        for i, cat in enumerate(categories):
+            with tabs[i]:
+                items = df_menu[df_menu['kategori'] == cat].reset_index()
+                cols = st.columns(2)
+                for idx, row in items.iterrows():
+                    # Format label tombol agar rapi
+                    label = f"{row['nama']}\nRp{row['harga']:,}"
+                    if cols[idx % 2].button(label, key=f"m_{idx}_{i}", width='stretch'):
+                        st.session_state.orders.append({"Item": row['nama'], "Harga": row['harga']})
+    else:
+        st.info("Tambahkan kategori menu (Makanan/Minuman) untuk memunculkan tombol order.")
 
 # --- KERANJANG ---
 if st.session_state.orders:
@@ -105,3 +112,4 @@ if st.session_state.last_receipt:
     if st.button("PESANAN BARU", width='stretch'):
         st.session_state.last_receipt = None
         st.rerun()
+
