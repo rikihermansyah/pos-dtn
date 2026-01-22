@@ -68,10 +68,15 @@ else:
                 items = df_menu[df_menu['kategori'] == cat].reset_index()
                 cols = st.columns(2)
                 for idx, row in items.iterrows():
-                    # Format label tombol agar rapi
-                    label = f"{row['nama']}\nRp{row['harga']:,}"
-                    if cols[idx % 2].button(label, key=f"m_{idx}_{i}", width='stretch'):
-                        st.session_state.orders.append({"Item": row['nama'], "Harga": row['harga']})
+                    # Mengubah harga menjadi integer (menghilangkan .0) 
+                    # dan memberi pemisah ribuan titik
+                    harga_bersih = int(row['harga'])
+                    label_harga = f"Rp{harga_bersih:,}".replace(",", ".")
+                    
+                    label_tombol = f"{row['nama']}\n{label_harga}"
+                    
+                    if cols[idx % 2].button(label_tombol, key=f"m_{idx}_{i}", width='stretch'):
+                        st.session_state.orders.append({"Item": row['nama'], "Harga": harga_bersih})
     else:
         st.info("Tambahkan kategori menu (Makanan/Minuman) untuk memunculkan tombol order.")
 
@@ -110,6 +115,7 @@ if st.session_state.last_receipt:
     if st.button("PESANAN BARU", width='stretch'):
         st.session_state.last_receipt = None
         st.rerun()
+
 
 
 
